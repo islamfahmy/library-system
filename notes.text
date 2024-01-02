@@ -1,0 +1,5 @@
+ use authentication as middleware with jwt tokens (maybe also introduce access and refresh tokens)
+
+ add partial index to borrowed books
+
+ there is a typo in location it should be in lower case 

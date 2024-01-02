@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  name         String
+  email        String @unique
+  passwordHash String
+
+  Borrowing UserBookBorrowing[]
+}
+
+model Book {
+  id        Int       @id @default(autoincrement())
+  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  title     String
+  author    String
+  ISBN      String
+  Location  String
+  Borrowing UserBookBorrowing[]
+
+  @@index(title)
+  @@index(author)
+  @@index(ISBN)
+}
+
+model UserBookBorrowing {
+  id Int @default(autoincrement())
+
+  book   Book @relation(fields: [bookId], references: [id])
+  bookId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  borrowed_at DateTime @default(now()) //hypertable key
+
+  returnedAt DateTime?
+  status     Status
+  dueDate    DateTime
+
+  @@unique([id, borrowed_at])
+}
+
+enum Status {
+  BORROWED
+  RETURNED
+}
